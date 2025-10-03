@@ -1,0 +1,19 @@
+{
+	"name": "chrome-sandbox",
+	"version": "0.0.0",
+	"private": true,
+	"exports": {
+		".": "./dist/index.js",
+		"./load": "./dist/load.js"
+	},
+	"scripts": {},
+	"dependencies": {
+		"puppeteer-core": "^24.22.3",
+		"@sparticuz/chromium": "140"
+	},
+	"devDependencies": {
+		"@rslib/core": "^0.15.0",
+		"@types/node": "^22.5.0",
+		"typescript": "^5.6.2"
+	}
+}

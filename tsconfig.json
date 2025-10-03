@@ -1,0 +1,30 @@
+{
+	"compilerOptions": {
+		/* Language & Environment */
+		"target": "ESNext",
+		"lib": ["ESNext", "DOM"],
+		"module": "CommonJS",
+		"moduleResolution": "Node",
+
+		/* Output */
+		"outDir": "./dist",
+		"rootDir": "./src",
+
+		/* Strictness */
+		"strict": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+
+		/* Paths / Aliases */
+		"baseUrl": "." /* relative to tsconfig.json */,
+		"paths": {
+			"@/*": ["src/*"] /* alias @ -> ./src */
+		},
+
+		/* Interop */
+		"resolveJsonModule": true,
+		"allowSyntheticDefaultImports": true
+	},
+	"include": ["src"],
+	"exclude": ["node_modules", "dist"]
+}
