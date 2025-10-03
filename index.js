@@ -15,6 +15,7 @@ async function main() {
 				width: 1920,
 				height: 1080,
 			},
+			debuggingPort: 9222,
 		});
 
 		console.log("Browser launched");

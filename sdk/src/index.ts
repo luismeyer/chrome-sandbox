@@ -1,4 +1,5 @@
 import { Sandbox } from "@vercel/sandbox";
+import type { Writable } from "node:stream";
 
 export class ChromeSandbox extends Sandbox {
 	// use outside the sandbox to create a new instance
@@ -17,27 +18,28 @@ export class ChromeSandbox extends Sandbox {
 		return chromeSandbox;
 	}
 
-	async launchBrowser() {
-		const install = await this.runCommand({
+	async launchBrowser({
+		stdout,
+		stderr,
+	}: {
+		stdout?: Writable;
+		stderr?: Writable;
+	}) {
+		await this.runCommand({
 			cmd: "npm",
 			args: ["install"],
+			stdout,
+			stderr,
 		});
 
-		if (install.exitCode !== 0) {
-			console.error(await install.stderr());
-		}
-
-		console.log(await install.stdout());
-
-		const launch = await this.runCommand({
+		await this.runCommand({
 			cmd: "node",
 			args: ["index.js"],
+			detached: true,
+			stdout,
+			stderr,
 		});
 
-		if (launch.exitCode !== 0) {
-			console.error(await launch.stderr());
-		}
-
-		console.log(await launch.stdout());
+		return this.domain(9222);
 	}
 }
