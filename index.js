@@ -1,7 +1,7 @@
 // @ts-check
 
 import puppeteer from "puppeteer-core";
-import { args, loadChromium } from "./chrome";
+import { args, loadChromium } from "./chrome.js";
 
 async function main() {
 	const path = await loadChromium();

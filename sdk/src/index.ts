@@ -18,14 +18,26 @@ export class ChromeSandbox extends Sandbox {
 	}
 
 	async launchBrowser() {
-		await this.runCommand({
+		const install = await this.runCommand({
 			cmd: "npm",
 			args: ["install"],
 		});
 
-		await this.runCommand({
+		if (install.exitCode !== 0) {
+			console.error(await install.stderr());
+		}
+
+		console.log(await install.stdout());
+
+		const launch = await this.runCommand({
 			cmd: "node",
 			args: ["index.js"],
 		});
+
+		if (launch.exitCode !== 0) {
+			console.error(await launch.stderr());
+		}
+
+		console.log(await launch.stdout());
 	}
 }
