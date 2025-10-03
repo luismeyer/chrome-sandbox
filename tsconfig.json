@@ -1,0 +1,23 @@
+{
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"compilerOptions": {
+		/* Language & Environment */
+		"target": "ESNext",
+		"lib": ["ESNext", "DOM"],
+		"module": "CommonJS",
+		"moduleResolution": "Node",
+
+		/* Strictness */
+		"strict": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+
+		/* Interop */
+		"resolveJsonModule": true,
+		"allowSyntheticDefaultImports": true,
+
+		"noEmit": true
+	},
+	"include": ["./chrome.js", "./index.js"],
+	"exclude": ["node_modules"]
+}
