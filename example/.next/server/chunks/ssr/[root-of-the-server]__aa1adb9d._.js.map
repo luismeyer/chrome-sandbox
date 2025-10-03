@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 3, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"","debugId":null}},
-    {"offset": {"line": 183, "column": 0}, "map": {"version":3,"sources":["file:///Users/luismeyer/Projects/sandbox-chrome/example/app/page.tsx"],"sourcesContent":["import { ChromeSandbox } from \"chrome-sandbox\";\n\nexport default async function Home() {\n\tconst browser = await ChromeSandbox.create();\n\n\tawait browser.launchBrowser();\n\n\treturn (\n\t\t<div className=\"font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20\">\n\t\t\t<main className=\"flex flex-col gap-[32px] row-start-2 items-center sm:items-start\">\n\t\t\t\t<h1 className=\"text-4xl font-bold\">Chrome Sandbox</h1>\n\t\t\t</main>\n\t\t</div>\n\t);\n}\n"],"names":[],"mappings":";;;;;AAAA;;;AAEe,eAAe;IAC7B,MAAM,UAAU,MAAM,kPAAa,CAAC,MAAM;IAE1C,MAAM,QAAQ,aAAa;IAE3B,qBACC,mVAAC;QAAI,WAAU;kBACd,cAAA,mVAAC;YAAK,WAAU;sBACf,cAAA,mVAAC;gBAAG,WAAU;0BAAqB;;;;;;;;;;;;;;;;AAIvC","debugId":null}}]
-}

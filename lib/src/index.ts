@@ -68,7 +68,7 @@ export class ChromeSandbox extends Sandbox {
 	async launchBrowser() {
 		const installResult = await this.runCommand({
 			cmd: "dnf",
-			args: ["install", "-y", "chromium"],
+			args: ["install", "-y", "chromium-headless"],
 			sudo: true,
 		});
 
