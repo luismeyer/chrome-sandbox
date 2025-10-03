@@ -6,14 +6,21 @@
 		".": "./dist/index.js",
 		"./load": "./dist/load.js"
 	},
-	"scripts": {},
+	"scripts": {
+		"build": "rslib build",
+		"dev": "rslib build --watch"
+	},
 	"dependencies": {
-		"puppeteer-core": "^24.22.3",
-		"@sparticuz/chromium": "140"
+		"puppeteer-core": "^24.22.3"
 	},
 	"devDependencies": {
-		"@rslib/core": "^0.15.0",
+		"@sparticuz/chromium": "140",
 		"@types/node": "^22.5.0",
-		"typescript": "^5.6.2"
+		"typescript": "^5.6.2",
+		"@vercel/sandbox": "^0.0.21",
+		"@rslib/core": "^0.15.0"
+	},
+	"peerDependencies": {
+		"@vercel/sandbox": "^0.0.21"
 	}
 }
