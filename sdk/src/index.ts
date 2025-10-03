@@ -9,6 +9,7 @@ export class ChromeSandbox extends Sandbox {
 				type: "git",
 				url: "https://github.com/luismeyer/chrome-sandbox",
 			},
+			ports: [9222],
 		});
 
 		// Rebuild as ChromeSandbox with the same params/state
@@ -18,26 +19,20 @@ export class ChromeSandbox extends Sandbox {
 		return chromeSandbox;
 	}
 
-	async launchBrowser({
-		stdout,
-		stderr,
-	}: {
-		stdout?: Writable;
-		stderr?: Writable;
-	}) {
+	async launchBrowser() {
 		await this.runCommand({
 			cmd: "npm",
 			args: ["install"],
-			stdout,
-			stderr,
+			stderr: process.stderr,
+			stdout: process.stdout,
 		});
 
 		await this.runCommand({
 			cmd: "node",
 			args: ["index.js"],
 			detached: true,
-			stdout,
-			stderr,
+			stderr: process.stderr,
+			stdout: process.stdout,
 		});
 
 		return this.domain(9222);

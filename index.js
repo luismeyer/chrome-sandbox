@@ -7,7 +7,7 @@ async function main() {
 	const path = await loadChromium();
 
 	try {
-		puppeteer.launch({
+		const browser = await puppeteer.launch({
 			executablePath: path,
 			headless: process.env.DEBUG === "true" ? false : "shell",
 			args: puppeteer.defaultArgs({ args: args(), headless: "shell" }),
@@ -15,10 +15,10 @@ async function main() {
 				width: 1920,
 				height: 1080,
 			},
-			debuggingPort: 9222,
+			browserWSEndpoint: "ws://127.0.0.1:9222",
 		});
 
-		console.log("Browser launched");
+		console.log("Browser launched on ws endpoint", browser.wsEndpoint());
 	} catch (error) {
 		console.error(error);
 		process.exitCode = 1;
