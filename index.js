@@ -15,6 +15,7 @@ async function main() {
 				width: 1920,
 				height: 1080,
 			},
+			debuggingPort: 9222,
 			browserWSEndpoint: "ws://127.0.0.1:9222",
 		});
 
