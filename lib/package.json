@@ -2,23 +2,17 @@
 	"name": "chrome-sandbox",
 	"version": "0.0.0",
 	"private": true,
-	"exports": {
-		".": "./dist/index.js",
-		"./load": "./dist/load.js"
-	},
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
 	"scripts": {
-		"build": "rslib build",
-		"dev": "rslib build --watch"
+		"build": "tsc",
+		"dev": "tsc --watch"
 	},
-	"dependencies": {
-		"puppeteer-core": "^24.22.3"
-	},
+	"dependencies": {},
 	"devDependencies": {
-		"@sparticuz/chromium": "140",
 		"@types/node": "^22.5.0",
 		"typescript": "^5.6.2",
-		"@vercel/sandbox": "^0.0.21",
-		"@rslib/core": "^0.15.0"
+		"@vercel/sandbox": "^0.0.21"
 	},
 	"peerDependencies": {
 		"@vercel/sandbox": "^0.0.21"
