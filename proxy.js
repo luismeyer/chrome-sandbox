@@ -8,7 +8,7 @@ export const CHROME_DEBUG_PORT = 9222;
 
 /**
  * Create a proxy server
- * @returns {Promise<http.Server>}
+ * @returns {void}
  */
 export function createProxy() {
 	console.info("Creating proxy server");
@@ -77,11 +77,9 @@ export function createProxy() {
 		console.error(err);
 	});
 
-	return new Promise((resolve) => {
-		server.listen(PORT, () => {
-			console.log(`🌐 Proxy server listening at http://localhost:${PORT}`);
-
-			resolve(server);
-		});
+	server.listen(PORT, () => {
+		console.log(`🌐 Proxy server listening at http://localhost:${PORT}`);
 	});
 }
+
+createProxy();
