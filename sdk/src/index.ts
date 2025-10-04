@@ -46,11 +46,9 @@ export class ChromeSandbox extends Sandbox {
 			console.log(line.data);
 
 			if (line.data === "CHROME_SANDBOX_READY") {
-				break;
+				return this.domain(3000);
 			}
 		}
-
-		return this.domain(3000);
 	}
 
 	async killBrowser() {

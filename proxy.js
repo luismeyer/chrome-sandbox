@@ -22,22 +22,50 @@ export function createProxy() {
 	const server = http.createServer(async (req, res) => {
 		const url = new URL(`http://127.0.0.1${req.url}`);
 
-		// Only proxy /devtools and /json requests
-		if (
-			url.pathname.startsWith("/devtools") ||
-			url.pathname.startsWith("/json")
-		) {
-			proxy.web(req, res, {}, (err) => {
+		const target = `http://127.0.0.1:${CHROME_DEBUG_PORT}${url.pathname}${url.search}`;
+
+		if (url.pathname.startsWith("/json/version")) {
+			try {
+				const response = await fetch(target);
+				const json = await response.json();
+
+				const publicHost = req.headers.host;
+				console.log({ publicHost });
+
+				/**
+				 * Replace the WebSocket URL with the public host
+				 * @param {string} u
+				 * @returns {string}
+				 */
+				const replaceWsUrl = (u) =>
+					u.replace("ws://127.0.0.1:9222", `wss://${publicHost}`);
+
+				if (json.webSocketDebuggerUrl) {
+					json.webSocketDebuggerUrl = replaceWsUrl(json.webSocketDebuggerUrl);
+				}
+
+				res.writeHead(200, { "Content-Type": "application/json" });
+				res.end(JSON.stringify(json, null, 2));
+			} catch (err) {
 				res.writeHead(502);
-				res.end(`Proxy error: ${err.message}`);
-			});
-		} else if (url.pathname === "/healthz") {
+				res.end(`Proxy fetch failed: ${err.message}`);
+			}
+
+			return;
+		}
+
+		// Health check
+		if (url.pathname === "/healthz") {
 			res.writeHead(200, { "Content-Type": "text/plain" });
 			res.end("OK");
-		} else {
-			res.writeHead(404, { "Content-Type": "text/plain" });
-			res.end("Not found");
+			return;
 		}
+
+		// Otherwise, proxy directly
+		proxy.web(req, res, {}, (err) => {
+			res.writeHead(502);
+			res.end(`Proxy error: ${err.message}`);
+		});
 	});
 
 	// Handle WebSocket upgrades
@@ -52,7 +80,6 @@ export function createProxy() {
 	return new Promise((resolve) => {
 		server.listen(PORT, () => {
 			console.log(`🌐 Proxy server listening at http://localhost:${PORT}`);
-			console.log(`🧭 Try: http://localhost:${PORT}/json/version`);
 
 			resolve(server);
 		});
