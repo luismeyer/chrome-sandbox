@@ -26,8 +26,6 @@ export class ChromeSandbox extends Sandbox {
 		this.currentCommand = await this.runCommand({
 			cmd: "npm",
 			args: ["install", "--production"],
-			stdout: process.stdout,
-			stderr: process.stderr,
 		});
 		for await (const line of this.currentCommand.logs()) {
 			console.log(line.data);
@@ -38,11 +36,9 @@ export class ChromeSandbox extends Sandbox {
 			cmd: "node",
 			args: ["test.js"],
 			detached: true,
-			stdout: process.stdout,
-			stderr: process.stderr,
 		});
 		for await (const line of this.currentCommand.logs()) {
-			console.log(line.data);
+			console.log("line", line.data);
 
 			const value = this.parseCommandOutput(line.data, "DONE");
 			if (value) {
@@ -54,32 +50,29 @@ export class ChromeSandbox extends Sandbox {
 		console.log("Starting proxy server");
 		this.currentCommand = await this.runCommand({
 			cmd: "node",
-			args: ["proxy.js"],
+			args: ["chrome-proxy.js"],
 			detached: true,
-			stdout: process.stdout,
-			stderr: process.stderr,
 		});
 		for await (const line of this.currentCommand.logs()) {
-			console.log(line.data);
+			console.log("line", line.data);
 
 			const value = this.parseCommandOutput(line.data, "PROXY_SERVER_READY");
 			if (value) {
+				console.log("PROXY_SERVER_READY");
 				break;
 			}
 		}
 
-		console.log("Loading browser");
+		console.log("Installing browser");
 		this.currentCommand = await this.runCommand({
 			cmd: "node",
-			args: ["browser.js"],
-			stdout: process.stdout,
-			stderr: process.stderr,
+			args: ["chrome-install.js"],
 		});
 
 		let chromeSandboxPath = "";
 
 		for await (const line of this.currentCommand.logs()) {
-			console.log(line.data);
+			console.log("line", line.data);
 
 			const value = this.parseCommandOutput(line.data, "CHROME_SANDBOX_PATH");
 			if (value) {
@@ -96,12 +89,10 @@ export class ChromeSandbox extends Sandbox {
 			args: args(),
 			env: createEnv(chromeSandboxPath),
 			detached: true,
-			stdout: process.stdout,
-			stderr: process.stderr,
 		});
 
 		for await (const line of this.currentCommand.logs()) {
-			console.log(line.data);
+			console.log("line", line.data);
 		}
 
 		return this.domain(3000);
