@@ -26,10 +26,29 @@ export class ChromeSandbox extends Sandbox {
 		this.currentCommand = await this.runCommand({
 			cmd: "npm",
 			args: ["install", "--production"],
+			stdout: process.stdout,
+			stderr: process.stderr,
 		});
-
 		for await (const line of this.currentCommand.logs()) {
 			console.log(line.data);
+		}
+
+		console.log("RUNNING TEST");
+		this.currentCommand = await this.runCommand({
+			cmd: "node",
+			args: ["test.js"],
+			detached: true,
+			stdout: process.stdout,
+			stderr: process.stderr,
+		});
+		for await (const line of this.currentCommand.logs()) {
+			console.log(line.data);
+
+			const value = this.parseCommandOutput(line.data, "DONE");
+			if (value) {
+				console.log("DONE");
+				break;
+			}
 		}
 
 		console.log("Starting proxy server");
@@ -37,6 +56,8 @@ export class ChromeSandbox extends Sandbox {
 			cmd: "node",
 			args: ["proxy.js"],
 			detached: true,
+			stdout: process.stdout,
+			stderr: process.stderr,
 		});
 		for await (const line of this.currentCommand.logs()) {
 			console.log(line.data);
@@ -51,6 +72,8 @@ export class ChromeSandbox extends Sandbox {
 		this.currentCommand = await this.runCommand({
 			cmd: "node",
 			args: ["browser.js"],
+			stdout: process.stdout,
+			stderr: process.stderr,
 		});
 
 		let chromeSandboxPath = "";
@@ -73,6 +96,8 @@ export class ChromeSandbox extends Sandbox {
 			args: args(),
 			env: createEnv(chromeSandboxPath),
 			detached: true,
+			stdout: process.stdout,
+			stderr: process.stderr,
 		});
 
 		for await (const line of this.currentCommand.logs()) {
