@@ -10,7 +10,7 @@ export class ChromeSandbox extends Sandbox {
 				type: "git",
 				url: "https://github.com/luismeyer/chrome-sandbox",
 			},
-			ports: [9222],
+			ports: [3000],
 		});
 
 		// Rebuild as ChromeSandbox with the same params/state
@@ -42,24 +42,15 @@ export class ChromeSandbox extends Sandbox {
 			stdout: process.stdout,
 		});
 
-		let wsEndpoint: string | undefined;
 		for await (const line of this.run.logs()) {
 			console.log(line.data);
 
-			if (line.data.startsWith("wsEndpoint=")) {
-				wsEndpoint = line.data.split("=")[1];
+			if (line.data === "CHROME_SANDBOX_READY") {
 				break;
 			}
 		}
 
-		if (!wsEndpoint) {
-			console.error("Browser not started");
-			return;
-		}
-
-		console.log({ wsEndpoint });
-
-		return wsEndpoint.replace("ws://127.0.0.1:9222", this.domain(9222));
+		return this.domain(3000);
 	}
 
 	async killBrowser() {

@@ -1,7 +1,9 @@
 // @ts-check
 
 import puppeteer from "puppeteer-core";
+
 import { args, loadChromium } from "./chrome.js";
+import { CHROME_DEBUG_PORT, createProxy } from "./proxy.js";
 
 async function main() {
 	const path = await loadChromium();
@@ -15,10 +17,25 @@ async function main() {
 				width: 1920,
 				height: 1080,
 			},
-			debuggingPort: 9222,
+			debuggingPort: CHROME_DEBUG_PORT,
 		});
 
-		console.log("wsEndpoint=", browser.wsEndpoint());
+		console.log(browser.wsEndpoint());
+
+		const server = await createProxy();
+
+		// Clean exit
+		const shutdown = async () => {
+			console.log("Shutting down...");
+			await browser.close();
+			server.close();
+			process.exit(0);
+		};
+
+		process.on("SIGINT", shutdown);
+		process.on("SIGTERM", shutdown);
+
+		console.log("CHROME_SANDBOX_READY");
 	} catch (error) {
 		console.error(error);
 		process.exitCode = 1;
