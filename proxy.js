@@ -20,7 +20,11 @@ export async function createProxy() {
 
 	// Main server
 	const server = http.createServer(async (req, res) => {
-		const url = new URL(req.url ?? "");
+		console.log({ reqUrl: req.url });
+
+		const url = new URL(`http://127.0.0.1${req.url}`);
+
+		console.log({ url });
 
 		// Only proxy /devtools and /json requests
 		if (
@@ -45,10 +49,12 @@ export async function createProxy() {
 		proxy.ws(req, socket, head);
 	});
 
-	server.listen(PORT, () => {
-		console.log(`🌐 Proxy server listening at http://localhost:${PORT}`);
-		console.log(`🧭 Try: http://localhost:${PORT}/json/version`);
-	});
+	return new Promise((resolve) => {
+		server.listen(PORT, () => {
+			console.log(`🌐 Proxy server listening at http://localhost:${PORT}`);
+			console.log(`🧭 Try: http://localhost:${PORT}/json/version`);
 
-	return server;
+			resolve(server);
+		});
+	});
 }
