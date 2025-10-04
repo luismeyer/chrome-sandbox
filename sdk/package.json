@@ -3,15 +3,17 @@
 	"version": "1.1.0",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
+	"type": "module",
 	"scripts": {
-		"build": "tsc",
-		"dev": "tsc --watch"
+		"build": "rslib build",
+		"dev": "rslib build --watch"
 	},
 	"dependencies": {},
 	"devDependencies": {
 		"@types/node": "^22.5.0",
 		"@vercel/sandbox": "^0.0.21",
-		"typescript": "^5.6.2"
+		"typescript": "^5.6.2",
+		"@rslib/core": "^0.15.0"
 	},
 	"peerDependencies": {
 		"@vercel/sandbox": "^0.0.21"

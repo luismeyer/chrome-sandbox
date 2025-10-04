@@ -11,7 +11,7 @@ export const CHROME_DEBUG_PORT = 9222;
  * @returns {void}
  */
 export function createProxy() {
-	console.info("Creating proxy server");
+	process.stdout.write("Creating proxy server");
 	const proxy = httProxy.createProxyServer({
 		target: `http://127.0.0.1:${CHROME_DEBUG_PORT}`,
 		ws: true,
@@ -30,7 +30,7 @@ export function createProxy() {
 				const json = await response.json();
 
 				const publicHost = req.headers.host;
-				console.log({ publicHost });
+				process.stdout.write(`PUBLIC_HOST_${publicHost}_PUBLIC_HOST`);
 
 				/**
 				 * Replace the WebSocket URL with the public host
@@ -74,11 +74,11 @@ export function createProxy() {
 	});
 
 	server.on("error", (err) => {
-		console.error(err);
+		process.stderr.write(err.message);
 	});
 
 	server.listen(PORT, () => {
-		console.log(`🌐 Proxy server listening at http://localhost:${PORT}`);
+		process.stdout.write(`PROXY_SERVER_READY_${PORT}_PROXY_SERVER_READY`);
 	});
 }
 
