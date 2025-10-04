@@ -10,7 +10,7 @@ export const CHROME_DEBUG_PORT = 9222;
  * Create a proxy server
  * @returns {Promise<http.Server>}
  */
-export async function createProxy() {
+export function createProxy() {
 	console.info("Creating proxy server");
 	const proxy = httProxy.createProxyServer({
 		target: `http://127.0.0.1:${CHROME_DEBUG_PORT}`,
@@ -20,11 +20,7 @@ export async function createProxy() {
 
 	// Main server
 	const server = http.createServer(async (req, res) => {
-		console.log({ reqUrl: req.url });
-
 		const url = new URL(`http://127.0.0.1${req.url}`);
-
-		console.log({ url });
 
 		// Only proxy /devtools and /json requests
 		if (
@@ -47,6 +43,10 @@ export async function createProxy() {
 	// Handle WebSocket upgrades
 	server.on("upgrade", (req, socket, head) => {
 		proxy.ws(req, socket, head);
+	});
+
+	server.on("error", (err) => {
+		console.error(err);
 	});
 
 	return new Promise((resolve) => {
