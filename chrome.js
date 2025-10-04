@@ -10,7 +10,7 @@ import { ReadableStream as WebReadableStream } from "node:stream/web";
 
 import { glob } from "glob";
 import * as tar from "tar";
-import { CHROME_DEBUG_PORT } from "./proxy";
+import { CHROME_DEBUG_PORT } from "./proxy.js";
 
 const outdir = "/vercel/sandbox/";
 
