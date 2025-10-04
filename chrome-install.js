@@ -2,7 +2,7 @@
 
 import { createReadStream, createWriteStream, Stats } from "node:fs";
 import fs from "node:fs/promises";
-import path, { join } from "node:path";
+import path from "node:path";
 import { Readable } from "node:stream";
 import { pipeline } from "node:stream/promises";
 import { createBrotliDecompress } from "node:zlib";
@@ -17,6 +17,24 @@ const URL =
 	"https://github.com/Sparticuz/chromium/releases/download/v140.0.0/chromium-v140.0.0-pack.x64.tar";
 
 /**
+ * Check if the target directory is already installed
+ * @param {string} targetDir
+ * @returns {Promise<boolean>}
+ */
+async function alreadyInstalled(targetDir) {
+	try {
+		const stats = await fs.stat(targetDir);
+		if (stats.isDirectory()) {
+			return true;
+		}
+
+		return false;
+	} catch {
+		return false;
+	}
+}
+
+/**
  * Load the chromium browser
  * @returns {Promise<string>}
  */
@@ -27,6 +45,10 @@ export async function loadChromium() {
 	const tarballPath = path.join(outdir, tarballName);
 
 	const targetDir = path.join(outdir, "browser");
+
+	if (await alreadyInstalled(targetDir)) {
+		return targetDir;
+	}
 
 	await downloadTarball(URL, tarballPath);
 

@@ -1,5 +1,6 @@
 import { Sandbox, type Command } from "@vercel/sandbox";
 import { args, createEnv } from "./chrome";
+import puppeteer from "puppeteer-core";
 
 export class ChromeSandbox extends Sandbox {
 	private currentCommand: Command | null = null;
@@ -14,6 +15,21 @@ export class ChromeSandbox extends Sandbox {
 			ports: [3000],
 		});
 
+		await sandbox.runCommand({
+			cmd: "node",
+			args: ["chrome-proxy.js"],
+			detached: true,
+			stdout: process.stdout,
+			stderr: process.stderr,
+		});
+
+		await sandbox.runCommand({
+			cmd: "npm",
+			args: ["install", "--production"],
+			stdout: process.stdout,
+			stderr: process.stderr,
+		});
+
 		// Rebuild as ChromeSandbox with the same params/state
 		const chromeSandbox = Object.create(ChromeSandbox.prototype);
 		Object.assign(chromeSandbox, sandbox);
@@ -22,42 +38,23 @@ export class ChromeSandbox extends Sandbox {
 	}
 
 	async launchBrowser() {
-		console.log("Installing dependencies");
-		const installCommand = await this.runCommand({
-			cmd: "npm",
-			args: ["install", "--production"],
-		});
-		for await (const line of installCommand.logs()) {
-			console.log(line.data);
-		}
-
-		console.log("Starting proxy server");
-		await this.runCommand({
+		const installBrowserCommand = await this.runCommand({
 			cmd: "node",
-			args: ["chrome-proxy.js"],
-			detached: true,
+			args: ["chrome-install.js"],
 			stdout: process.stdout,
 			stderr: process.stderr,
 		});
 
-		console.log("Installing browser");
-		const installBrowserCommand = await this.runCommand({
-			cmd: "node",
-			args: ["chrome-install.js"],
-		});
-
 		let chromeSandboxPath = "";
 		for await (const line of installBrowserCommand.logs()) {
-			console.log("line", line.data);
-
 			const value = this.parseCommandOutput(line.data, "CHROME_SANDBOX_PATH");
+
 			if (value) {
 				chromeSandboxPath = value;
 				break;
 			}
 		}
 
-		console.log("Starting browser");
 		this.currentCommand = await this.runCommand({
 			cmd: `${chromeSandboxPath}/chromium`,
 			args: args(),
@@ -67,23 +64,21 @@ export class ChromeSandbox extends Sandbox {
 			stderr: process.stderr,
 		});
 
-		return this.domain(3000);
-	}
+		const domain = this.domain(3000);
 
-	async killBrowser() {
-		if (this.currentCommand?.exitCode) {
-			console.log("Browser killed");
-			return;
-		}
+		const browser = await puppeteer.connect({
+			browserURL: domain,
+		});
 
-		if (!this.currentCommand) {
-			console.error("Browser not running");
-			return;
-		}
+		browser.on("disconnected", () => {
+			this.currentCommand?.kill();
+		});
 
-		console.log("Killing browser");
+		browser.on("closed", () => {
+			this.currentCommand?.kill();
+		});
 
-		await this.currentCommand?.kill();
+		return browser;
 	}
 
 	private parseCommandOutput(output: string, symbol: string) {

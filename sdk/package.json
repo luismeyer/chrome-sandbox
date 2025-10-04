@@ -8,12 +8,14 @@
 		"build": "rslib build",
 		"dev": "rslib build --watch"
 	},
-	"dependencies": {},
+	"dependencies": {
+		"puppeteer-core": "^24.23.0"
+	},
 	"devDependencies": {
+		"@rslib/core": "^0.15.0",
 		"@types/node": "^22.5.0",
 		"@vercel/sandbox": "^0.0.21",
-		"typescript": "^5.6.2",
-		"@rslib/core": "^0.15.0"
+		"typescript": "^5.6.2"
 	},
 	"peerDependencies": {
 		"@vercel/sandbox": "^0.0.21"
