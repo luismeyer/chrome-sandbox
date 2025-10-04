@@ -23,55 +23,32 @@ export class ChromeSandbox extends Sandbox {
 
 	async launchBrowser() {
 		console.log("Installing dependencies");
-		this.currentCommand = await this.runCommand({
+		const installCommand = await this.runCommand({
 			cmd: "npm",
 			args: ["install", "--production"],
 		});
-		for await (const line of this.currentCommand.logs()) {
+		for await (const line of installCommand.logs()) {
 			console.log(line.data);
 		}
 
-		console.log("RUNNING TEST");
-		this.currentCommand = await this.runCommand({
-			cmd: "node",
-			args: ["test.js"],
-			detached: true,
-		});
-		for await (const line of this.currentCommand.logs()) {
-			console.log("line", line.data);
-
-			const value = this.parseCommandOutput(line.data, "DONE");
-			if (value) {
-				console.log("DONE");
-				break;
-			}
-		}
-
 		console.log("Starting proxy server");
-		this.currentCommand = await this.runCommand({
+		await this.runCommand({
 			cmd: "node",
 			args: ["chrome-proxy.js"],
 			detached: true,
+			stdout: process.stdout,
+			stderr: process.stderr,
 		});
-		for await (const line of this.currentCommand.logs()) {
-			console.log("line", line.data);
-
-			const value = this.parseCommandOutput(line.data, "PROXY_SERVER_READY");
-			if (value) {
-				console.log("PROXY_SERVER_READY");
-				break;
-			}
-		}
 
 		console.log("Installing browser");
-		this.currentCommand = await this.runCommand({
+		const installBrowserCommand = await this.runCommand({
 			cmd: "node",
 			args: ["chrome-install.js"],
 		});
 
 		let chromeSandboxPath = "";
 
-		for await (const line of this.currentCommand.logs()) {
+		for await (const line of installBrowserCommand.logs()) {
 			console.log("line", line.data);
 
 			const value = this.parseCommandOutput(line.data, "CHROME_SANDBOX_PATH");

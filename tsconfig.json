@@ -18,6 +18,6 @@
 
 		"noEmit": true
 	},
-	"include": ["./chrome.js", "./index.js"],
+	"include": ["*.js"],
 	"exclude": ["node_modules"]
 }

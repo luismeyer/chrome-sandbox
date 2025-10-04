@@ -1,19 +1,15 @@
-// @ts-check
-
 import http from "node:http";
 import httProxy from "http-proxy";
 
 const PORT = 3000;
-export const CHROME_DEBUG_PORT = 9222;
+const CHROME_DEBUG_PORT = 9222;
 
-process.stdout.write("Creating proxy server");
 const proxy = httProxy.createProxyServer({
 	target: `http://127.0.0.1:${CHROME_DEBUG_PORT}`,
 	ws: true,
 	changeOrigin: true,
 });
 
-// Main server
 const server = http.createServer(async (req, res) => {
 	const url = new URL(`http://127.0.0.1${req.url}`);
 
@@ -73,5 +69,5 @@ server.on("error", (err) => {
 });
 
 server.listen(PORT, () => {
-	process.stdout.write(`PROXY_SERVER_READY_${PORT}_PROXY_SERVER_READY`);
+	console.log(`Proxy server listening on :${PORT}`);
 });
