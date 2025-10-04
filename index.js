@@ -16,10 +16,9 @@ async function main() {
 				height: 1080,
 			},
 			debuggingPort: 9222,
-			browserWSEndpoint: "ws://127.0.0.1:9222",
 		});
 
-		console.log("Browser launched on ws endpoint", browser.wsEndpoint());
+		console.log("wsEndpoint=", browser.wsEndpoint());
 	} catch (error) {
 		console.error(error);
 		process.exitCode = 1;

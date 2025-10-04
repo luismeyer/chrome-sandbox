@@ -1,7 +1,8 @@
-import { Sandbox } from "@vercel/sandbox";
-import type { Writable } from "node:stream";
+import { Sandbox, type Command } from "@vercel/sandbox";
 
 export class ChromeSandbox extends Sandbox {
+	private run: Command | null = null;
+
 	// use outside the sandbox to create a new instance
 	static async create(): Promise<ChromeSandbox> {
 		const sandbox = await Sandbox.create({
@@ -20,14 +21,20 @@ export class ChromeSandbox extends Sandbox {
 	}
 
 	async launchBrowser() {
-		await this.runCommand({
+		console.log("Installing dependencies");
+
+		const output = await this.runCommand({
 			cmd: "npm",
 			args: ["install"],
 			stderr: process.stderr,
 			stdout: process.stdout,
 		});
 
-		await this.runCommand({
+		for await (const line of output.logs()) {
+			console.log(line.data);
+		}
+
+		this.run = await this.runCommand({
 			cmd: "node",
 			args: ["index.js"],
 			detached: true,
@@ -35,6 +42,39 @@ export class ChromeSandbox extends Sandbox {
 			stdout: process.stdout,
 		});
 
-		return this.domain(9222);
+		let wsEndpoint: string | undefined;
+		for await (const line of this.run.logs()) {
+			console.log(line.data);
+
+			if (line.data.startsWith("wsEndpoint=")) {
+				wsEndpoint = line.data.split("=")[1];
+				break;
+			}
+		}
+
+		if (!wsEndpoint) {
+			console.error("Browser not started");
+			return;
+		}
+
+		console.log({ wsEndpoint });
+
+		return wsEndpoint.replace("ws://127.0.0.1:9222", this.domain(9222));
+	}
+
+	async killBrowser() {
+		if (this.run?.exitCode) {
+			console.log("Browser killed");
+			return;
+		}
+
+		if (!this.run) {
+			console.error("Browser not running");
+			return;
+		}
+
+		console.log("Killing browser");
+
+		await this.run?.kill();
 	}
 }
