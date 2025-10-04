@@ -45,6 +45,7 @@ export function args() {
 		"--no-zygote", // https://source.chromium.org/search?q=lang:cpp+symbol:kNoZygote&ss=chromium
 		"--remote-debugging-address=0.0.0.0",
 		`--remote-debugging-port=${CHROME_DEBUG_PORT}`,
+		"--enable-logging=stderr",
 	];
 
 	return [

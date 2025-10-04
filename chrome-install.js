@@ -168,8 +168,8 @@ async function withTempFile(fn) {
 	}
 }
 
-function main() {
-	const path = loadChromium();
+async function main() {
+	const path = await loadChromium();
 
 	console.log(`CHROME_SANDBOX_PATH_${path}_CHROME_SANDBOX_PATH`);
 }
