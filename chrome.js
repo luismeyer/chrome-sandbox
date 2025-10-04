@@ -10,6 +10,7 @@ import { ReadableStream as WebReadableStream } from "node:stream/web";
 
 import { glob } from "glob";
 import * as tar from "tar";
+import { CHROME_DEBUG_PORT } from "./proxy";
 
 const outdir = "/vercel/sandbox/";
 
@@ -27,6 +28,7 @@ export function args() {
 		"--no-pings", // Don't send hyperlink auditing pings
 		"--single-process", // Runs the renderer and plugins in the same process as the browser. NOTES: Needs to be single-process to avoid `prctl(PR_SET_NO_NEW_PRIVS) failed` error
 		"--font-render-hinting=none", // https://github.com/puppeteer/puppeteer/issues/2410#issuecomment-560573612
+		"--disable-dev-shm-usage",
 	];
 	const chromiumDisableFeatures = [
 		"AudioServiceOutOfProcess",
@@ -38,9 +40,9 @@ export function args() {
 	const graphicsFlags = [
 		"--ignore-gpu-blocklist", // https://source.chromium.org/search?q=lang:cpp+symbol:kIgnoreGpuBlocklist&ss=chromium
 		"--in-process-gpu", // Saves some memory by moving GPU process into a browser process thread
+		"--disable-gpu",
+		"--disable-webgl",
 	];
-
-	graphicsFlags.push("--disable-webgl");
 
 	const insecureFlags = [
 		"--allow-running-insecure-content", // https://source.chromium.org/search?q=lang:cpp+symbol:kAllowRunningInsecureContent&ss=chromium
@@ -50,9 +52,11 @@ export function args() {
 	];
 
 	const headlessFlags = [
-		"--headless='shell'", // We only support running chrome-headless-shell
+		"--headless='new'",
 		"--no-sandbox", // https://source.chromium.org/search?q=lang:cpp+symbol:kNoSandbox&ss=chromium
 		"--no-zygote", // https://source.chromium.org/search?q=lang:cpp+symbol:kNoZygote&ss=chromium
+		"--remote-debugging-address=0.0.0.0",
+		`--remote-debugging-port=${CHROME_DEBUG_PORT}`,
 	];
 
 	return [
