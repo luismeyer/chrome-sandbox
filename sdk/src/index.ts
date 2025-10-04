@@ -25,7 +25,7 @@ export class ChromeSandbox extends Sandbox {
 
 		const output = await this.runCommand({
 			cmd: "npm",
-			args: ["install"],
+			args: ["install", "--production"],
 			stderr: process.stderr,
 			stdout: process.stdout,
 		});
