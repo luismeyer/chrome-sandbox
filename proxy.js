@@ -1,7 +1,7 @@
 // @ts-check
 
 import http from "node:http";
-import { createProxyServer } from "http-proxy";
+import httProxy from "http-proxy";
 
 const PORT = 3000;
 export const CHROME_DEBUG_PORT = 9222;
@@ -12,7 +12,7 @@ export const CHROME_DEBUG_PORT = 9222;
  */
 export async function createProxy() {
 	console.info("Creating proxy server");
-	const proxy = createProxyServer({
+	const proxy = httProxy.createProxyServer({
 		target: `http://127.0.0.1:${CHROME_DEBUG_PORT}`,
 		ws: true,
 		changeOrigin: true,
