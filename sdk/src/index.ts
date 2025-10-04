@@ -129,11 +129,11 @@ export class ChromeSandbox extends Sandbox {
 
 		// Find start index of prefix
 		const start = output.indexOf(prefix);
-		if (start === -1) throw new Error("Prefix not found");
+		if (start === -1) return;
 
 		// Find end index of suffix (after the prefix)
 		const end = output.indexOf(suffix, start + prefix.length);
-		if (end === -1) throw new Error("Suffix not found");
+		if (end === -1) return;
 
 		// Extract the path
 		return output.slice(start + prefix.length, end);
