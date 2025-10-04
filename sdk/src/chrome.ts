@@ -62,7 +62,7 @@ export const createEnv = (targetDir: string) => {
 	const env: Record<string, string> = {};
 
 	// If the FONTCONFIG_PATH is not set, set it to /tmp/fonts
-	env.FONTCONFIG_PATH ??= join(targetDir, "fonts");
+	env.FONTCONFIG_PATH ??= targetDir;
 	// Set up Home folder if not already set
 	env.HOME ??= targetDir;
 
@@ -75,3 +75,5 @@ export const createEnv = (targetDir: string) => {
 
 	return env;
 };
+
+console.log(args().join(" "));

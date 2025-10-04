@@ -21,7 +21,6 @@ const server = http.createServer(async (req, res) => {
 			const json = await response.json();
 
 			const publicHost = req.headers.host;
-			process.stdout.write(`PUBLIC_HOST_${publicHost}_PUBLIC_HOST`);
 
 			/**
 			 * Replace the WebSocket URL with the public host
@@ -29,7 +28,7 @@ const server = http.createServer(async (req, res) => {
 			 * @returns {string}
 			 */
 			const replaceWsUrl = (u) =>
-				u.replace("ws://127.0.0.1:9222", `wss://${publicHost}`);
+				u.replace("ws://127.0.0.1:9222", `https://${publicHost}`);
 
 			if (json.webSocketDebuggerUrl) {
 				json.webSocketDebuggerUrl = replaceWsUrl(json.webSocketDebuggerUrl);
@@ -65,6 +64,10 @@ server.on("upgrade", (req, socket, head) => {
 });
 
 server.on("error", (err) => {
+	process.stderr.write(err.message);
+});
+
+proxy.on("error", (err) => {
 	process.stderr.write(err.message);
 });
 

@@ -47,7 +47,6 @@ export class ChromeSandbox extends Sandbox {
 		});
 
 		let chromeSandboxPath = "";
-
 		for await (const line of installBrowserCommand.logs()) {
 			console.log("line", line.data);
 
@@ -58,19 +57,15 @@ export class ChromeSandbox extends Sandbox {
 			}
 		}
 
-		console.log({ chromeSandboxPath });
-
 		console.log("Starting browser");
 		this.currentCommand = await this.runCommand({
 			cmd: `${chromeSandboxPath}/chromium`,
 			args: args(),
 			env: createEnv(chromeSandboxPath),
 			detached: true,
+			stdout: process.stdout,
+			stderr: process.stderr,
 		});
-
-		for await (const line of this.currentCommand.logs()) {
-			console.log("line", line.data);
-		}
 
 		return this.domain(3000);
 	}
